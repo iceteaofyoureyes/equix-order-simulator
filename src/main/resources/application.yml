@@ -5,3 +5,8 @@ server:
 spring:
   jackson:
     time-zone: Asia/Ho_Chi_Minh
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
