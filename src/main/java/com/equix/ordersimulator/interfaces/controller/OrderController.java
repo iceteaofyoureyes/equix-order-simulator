@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +37,19 @@ public class OrderController {
 
     }
 
-    @PostMapping(path = "{id}/cancel")
-    public ResponseEntity<BaseResponse<OrderResponse>> createOrder(@PathVariable @Valid @Min(1) Long id) {
+    @PostMapping(path = "{id:[1-9][0-9]*}/cancel")
+    @Operation(summary = "Cancel a PENDING Order by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Found Order with specified id"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Invalid Order id format supplied/Did not find Order with specified id"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Invalid Cancel status")}
+    )
+    public ResponseEntity<BaseResponse<OrderResponse>> cancelOrder(@PathVariable Long id) {
         Order canceledOrder = orderService.cancelOrder(id);
         return ResponseEntity.
-                status(HttpStatus.OK).
+                status(HttpStatusCode.OK.value).
                 body(BaseResponse.<OrderResponse>builder().
-                        code(HttpStatus.OK.value()).
+                        code(HttpStatusCode.OK.value).
                         data(orderMapper.toOrderResponse(canceledOrder)).
                         build()
                 );
