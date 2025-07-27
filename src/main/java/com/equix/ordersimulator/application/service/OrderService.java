@@ -67,6 +67,12 @@ public class OrderService {
     }
 
     public Order getOrderById(Long orderId) {
-        return orderRepository.getOrderById(orderId);
+        Order targetOrder = orderRepository.getOrderById(orderId);
+
+        if (Objects.isNull(targetOrder)) {
+            throw new ResourceNotFoundException(String.format("Order with id %d not found", orderId));
+        }
+
+        return targetOrder;
     }
 }
