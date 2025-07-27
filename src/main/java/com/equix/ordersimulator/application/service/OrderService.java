@@ -1,5 +1,6 @@
 package com.equix.ordersimulator.application.service;
 
+import com.equix.ordersimulator.application.dto.constant.OrderAction;
 import com.equix.ordersimulator.application.exception.AppException;
 import com.equix.ordersimulator.application.exception.ErrorCode;
 import com.equix.ordersimulator.application.exception.ResourceNotFoundException;
@@ -10,6 +11,7 @@ import com.equix.ordersimulator.domain.repository.SymbolRepository;
 import com.equix.ordersimulator.interfaces.mapper.OrderMapper;
 import com.equix.ordersimulator.interfaces.request.CreateOrderRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,18 +21,22 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final SymbolRepository symbolRepository;
     private final OrderMapper orderMapper;
+    private final LoggingService loggingService;
 
     public Order createOrder(CreateOrderRequest request) {
         Set<String> allSymbols = symbolRepository.getAllSymbols();
         String symbol = request.getSymbol();
 
         if (!allSymbols.contains(symbol)) {
-            throw new ResourceNotFoundException(String.format("Symbol '%s' is not exists", symbol));
+            String errorMessage = String.format("Symbol '%s' is not exists", symbol);
+            loggingService.logOrderInfo(OrderAction.CREATE_ORDER, null, "Create new Order failed due to " + errorMessage);
+            throw new ResourceNotFoundException(errorMessage);
         }
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -40,18 +46,22 @@ public class OrderService {
         order.setCreatedTime(currentTime);
         order.setUpdatedTime(currentTime);
         //todo get userId from spring security context holder and set to order.userId
-
-        return orderRepository.createOrder(order);
+        Order createdOrder = orderRepository.createOrder(order);
+        loggingService.logCreateOrder(createdOrder, true, "Created a new Order.");
+        return createdOrder;
     }
 
     public Order cancelOrder(Long orderId) {
         Order targetOrder = orderRepository.getOrderById(orderId);
 
         if (Objects.isNull(targetOrder)) {
-            throw new ResourceNotFoundException(String.format("Order with id %d not found", orderId));
+            String errorMessage = String.format("Order with id %d not found", orderId);
+            loggingService.logOrderInfo(OrderAction.CANCEL_ORDER, orderId, errorMessage);
+            throw new ResourceNotFoundException(errorMessage);
         }
 
         if (!OrderStatus.PENDING.equals(targetOrder.getStatus())) {
+            loggingService.logCancelOrder(targetOrder, false, "Cancel order failed. Only PENDING orders can be canceled");
             throw new AppException(ErrorCode.BUSINESS_RULE_EXCEPTION, "Invalid order Status. Only PENDING orders can be canceled");
         }
 
@@ -59,7 +69,9 @@ public class OrderService {
         targetOrder.setCanceledTime(LocalDateTime.now());
         //todo xóa khỏi queue chờ match order
 
-        return orderRepository.updateOrder(targetOrder);
+        Order canceledOrder = orderRepository.updateOrder(targetOrder);
+        loggingService.logCancelOrder(canceledOrder, true, "Cancel order Successfully");
+        return canceledOrder;
     }
 
     public List<Order> getAllOrder() {
