@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -73,5 +76,28 @@ public class OrderController {
                 );
     }
 
+    @GetMapping
+    @Operation(summary = "Get all Orders")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Returns all Orders that created")}
+    )
+    public ResponseEntity<BaseResponse<List<OrderResponse>>> getAllOrders() {
+        List<Order> orders = orderService.getAllOrder();
+        List<OrderResponse> orderResponses;
+
+        if (orders.isEmpty()) {
+            orderResponses = Collections.emptyList();
+        } else {
+            orderResponses = orders.stream().map(orderMapper::toOrderResponse).toList();
+        }
+
+        return ResponseEntity.
+                status(HttpStatusCode.OK.value).
+                body(BaseResponse.<List<OrderResponse>>builder().
+                        code(HttpStatusCode.OK.value).
+                        data(orderResponses).
+                        build()
+                );
+    }
 
 }
