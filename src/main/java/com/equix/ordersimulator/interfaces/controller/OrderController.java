@@ -1,5 +1,6 @@
 package com.equix.ordersimulator.interfaces.controller;
 
+import com.equix.ordersimulator.application.dto.SimulateExecutionResult;
 import com.equix.ordersimulator.application.service.OrderService;
 import com.equix.ordersimulator.domain.model.Order;
 import com.equix.ordersimulator.interfaces.constant.HttpStatusCode;
@@ -110,6 +111,25 @@ public class OrderController {
                 body(BaseResponse.<List<OrderResponse>>builder().
                         code(HttpStatusCode.OK.value).
                         data(orderResponses).
+                        build()
+                );
+    }
+
+    @PostMapping(path = "/simulate-execution")
+    @Operation(summary = "Simulate Order execution")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Simulate Order execution successfully"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Simulate Order failed as there is no PENDING Order"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_FORBIDDEN, description = "Forbidden: User does not have required permission")}
+    )
+    @PreAuthorize("hasAuthority('ORDER.SIMULATE_EXECUTION')")
+    public ResponseEntity<BaseResponse<SimulateExecutionResult>> simulateExecute() {
+        SimulateExecutionResult result = orderService.simulateExecution();
+        return ResponseEntity.
+                status(HttpStatusCode.OK.value).
+                body(BaseResponse.<SimulateExecutionResult>builder().
+                        code(HttpStatusCode.OK.value).
+                        data(result).
                         build()
                 );
     }

@@ -1,5 +1,6 @@
 package com.equix.ordersimulator.application.service;
 
+import com.equix.ordersimulator.application.dto.SimulateExecutionResult;
 import com.equix.ordersimulator.application.dto.constant.OrderAction;
 import com.equix.ordersimulator.application.exception.AppException;
 import com.equix.ordersimulator.application.exception.ErrorCode;
@@ -12,9 +13,11 @@ import com.equix.ordersimulator.interfaces.mapper.OrderMapper;
 import com.equix.ordersimulator.interfaces.request.CreateOrderRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -86,5 +89,27 @@ public class OrderService {
         }
 
         return targetOrder;
+    }
+
+    public SimulateExecutionResult simulateExecution() {
+        List<Order> pendingOrders = orderRepository.getOrdersByStatus(OrderStatus.PENDING);
+
+        if (pendingOrders.isEmpty()) {
+            String errorMessage = String.format("Simulate execute Order failed. No %s Order", OrderStatus.PENDING);
+            loggingService.logOrderInfo(OrderAction.EXECUTE_ORDER, null, errorMessage);
+            throw new AppException(ErrorCode.BUSINESS_RULE_EXCEPTION, errorMessage);
+        }
+
+        Set<Long> executeOrderIds = new HashSet<>();
+
+        for (Order o: pendingOrders) {
+            if (RandomUtils.insecure().randomBoolean()) {
+                executeOrderIds.add(o.getId());
+            }
+        }
+
+        List<Order> executedOrders = orderRepository.updateOrdersStatus(executeOrderIds, OrderStatus.EXECUTED);
+        loggingService.logOrderInfo(OrderAction.EXECUTE_ORDER, null, String.format("Simulate execute Order successfully. Updated %d PENDING Order to EXECUTED status", executedOrders.size()));
+        return new SimulateExecutionResult(executedOrders.size(), executeOrderIds);
     }
 }

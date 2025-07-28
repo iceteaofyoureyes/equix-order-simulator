@@ -3,14 +3,12 @@ package com.equix.ordersimulator.infras.persistence;
 import com.equix.ordersimulator.domain.model.Order;
 import com.equix.ordersimulator.domain.model.PriceLevel;
 import com.equix.ordersimulator.domain.model.enums.OrderSide;
+import com.equix.ordersimulator.domain.model.enums.OrderStatus;
 import com.equix.ordersimulator.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -74,5 +72,22 @@ public class OrderRepositoryImpl implements OrderRepository {
             level.remove(order);
             if (level.isEmpty()) book.remove(order.getPrice());
         }
+    }
+
+    @Override
+    public List<Order> getOrdersByStatus(OrderStatus orderStatus) {
+        return allOrders.values().stream().filter(o -> orderStatus.equals(o.getStatus())).map(Order::new).toList();
+    }
+
+    @Override
+    public List<Order> updateOrdersStatus(Set<Long> orderIds, OrderStatus orderStatus) {
+        List<Order> targetOrder = allOrders.values().stream().filter(o -> orderIds.contains(o.getId())).toList();
+
+        if (targetOrder.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        targetOrder.forEach(o -> o.setStatus(orderStatus));
+        return targetOrder;
     }
 }
