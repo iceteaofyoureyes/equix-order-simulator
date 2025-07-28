@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -31,8 +32,10 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = HttpStatusCode.STATUS_CREATED, description = "Create new Order successfully"),
             @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Return on invalid Symbol (Symbol that does not exist)"),
-            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Return on invalid payload (Detailed errors will be included)")}
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Return on invalid payload (Detailed errors will be included)"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_FORBIDDEN, description = "Forbidden: User does not have required permission")}
     )
+    @PreAuthorize("hasAuthority('ORDER.CREATE')")
     public ResponseEntity<BaseResponse<OrderResponse>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
         Order createdOrder = orderService.createOrder(request);
         return ResponseEntity.
@@ -50,8 +53,10 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Found Order with specified id"),
             @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Invalid Order id format supplied/Did not find Order with specified id"),
-            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Invalid Cancel status")}
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Invalid Cancel status"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_FORBIDDEN, description = "Forbidden: User does not have required permission")}
     )
+    @PreAuthorize("hasAuthority('ORDER.CANCEL')")
     public ResponseEntity<BaseResponse<OrderResponse>> cancelOrder(@PathVariable Long id) {
         Order canceledOrder = orderService.cancelOrder(id);
         return ResponseEntity.
@@ -68,8 +73,10 @@ public class OrderController {
     @Operation(summary = "Get an Order by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Found Order with specified id"),
-            @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Invalid Order id format supplied/Did not find Order with specified id")}
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Invalid Order id format supplied/Did not find Order with specified id"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_FORBIDDEN, description = "Forbidden: User does not have required permission")}
     )
+    @PreAuthorize("hasAuthority('ORDER.GET')")
     public ResponseEntity<BaseResponse<OrderResponse>> getOrderById(@PathVariable Long id) {
         Order targetOrder = orderService.getOrderById(id);
         return ResponseEntity.
@@ -84,8 +91,10 @@ public class OrderController {
     @GetMapping
     @Operation(summary = "Get all Orders")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Returns all Orders that created")}
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_OK, description = "Returns all Orders that created"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_FORBIDDEN, description = "Forbidden: User does not have required permission")}
     )
+    @PreAuthorize("hasAuthority('ORDER.GET_ALL')")
     public ResponseEntity<BaseResponse<List<OrderResponse>>> getAllOrders() {
         List<Order> orders = orderService.getAllOrder();
         List<OrderResponse> orderResponses;
