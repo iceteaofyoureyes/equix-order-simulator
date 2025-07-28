@@ -2,7 +2,7 @@ package com.equix.ordersimulator.interfaces.controller;
 
 import com.equix.ordersimulator.application.service.OrderService;
 import com.equix.ordersimulator.domain.model.Order;
-import com.equix.ordersimulator.interfaces.config.HttpStatusCode;
+import com.equix.ordersimulator.interfaces.constant.HttpStatusCode;
 import com.equix.ordersimulator.interfaces.mapper.OrderMapper;
 import com.equix.ordersimulator.interfaces.request.CreateOrderRequest;
 import com.equix.ordersimulator.interfaces.response.BaseResponse;

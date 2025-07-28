@@ -1,4 +1,4 @@
-package com.equix.ordersimulator.interfaces.config;
+package com.equix.ordersimulator.interfaces.constant;
 
 public enum HttpStatusCode {
 
