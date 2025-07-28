@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +27,18 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @PostMapping
+    @Operation(summary = "Create a new Order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_CREATED, description = "Create new Order successfully"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Return on invalid Symbol (Symbol that does not exist)"),
+            @ApiResponse(responseCode = HttpStatusCode.STATUS_BAD_REQUEST, description = "Return on invalid payload (Detailed errors will be included)")}
+    )
     public ResponseEntity<BaseResponse<OrderResponse>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
         Order createdOrder = orderService.createOrder(request);
         return ResponseEntity.
-                status(HttpStatus.CREATED).
+                status(HttpStatusCode.CREATED.value).
                 body(BaseResponse.<OrderResponse>builder().
-                        code(HttpStatus.CREATED.value()).
+                        code(HttpStatusCode.CREATED.value).
                         data(orderMapper.toOrderResponse(createdOrder)).
                         build()
                 );
