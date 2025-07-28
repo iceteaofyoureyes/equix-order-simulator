@@ -2,6 +2,7 @@ package com.equix.ordersimulator.interfaces.response;
 
 import com.equix.ordersimulator.domain.model.enums.OrderSide;
 import com.equix.ordersimulator.domain.model.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,7 +20,13 @@ public class OrderResponse {
     private Integer quantity;
     private OrderSide side;
     private OrderStatus status;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime createdTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime updatedTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime canceledTime;
 }
