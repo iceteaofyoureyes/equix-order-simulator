@@ -56,11 +56,11 @@ Once the application is running, you can access the Swagger UI for interactive A
 
 **Authentication:**
 - The API is protected with Spring Basic Authentication.
-- You must provide the username and password as configured in your `application.yml` when using Swagger UI or any API client.
+- You must provide the username and password as configured in your `application.yml` when using Swagger UI or any API client (configured as: admin/Admin@123).
 - In Swagger UI, click the "Authorize" button and enter your credentials to access secured endpoints.
 
 Use Swagger UI to:
-- Explore available endpoints
+- Explore available endpoints (**NOTICE: In the context of testing environment Create Order API only accept the following Symbols: FPT, VIC, VCB, VNINDEX. Other Symbols won't be accepted**)
 - Try out API requests and responses
 - View request/response models and error codes
 

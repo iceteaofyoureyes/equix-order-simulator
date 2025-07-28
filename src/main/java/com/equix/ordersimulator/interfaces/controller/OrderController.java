@@ -29,7 +29,7 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @PostMapping
-    @Operation(summary = "Create a new Order")
+    @Operation(summary = "Create a new Order", description = "In the context of testing environment Create Order API only accept the following Symbols: FPT, VIC, VCB, VNINDEX. Other Symbols won't be accepted")
     @ApiResponses(value = {
             @ApiResponse(responseCode = HttpStatusCode.STATUS_CREATED, description = "Create new Order successfully"),
             @ApiResponse(responseCode = HttpStatusCode.STATUS_NOT_FOUND, description = "Return on invalid Symbol (Symbol that does not exist)"),
