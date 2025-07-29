@@ -11,3 +11,5 @@ application:
   security:
     username: admin
     password: Admin@123
+  matching-engine:
+    enabled: true
