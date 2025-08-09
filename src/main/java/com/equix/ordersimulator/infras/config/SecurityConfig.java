@@ -1,4 +1,4 @@
-package com.equix.ordersimulator.interfaces.config;
+package com.equix.ordersimulator.infras.config;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

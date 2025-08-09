@@ -18,6 +18,7 @@ public class OrderResponse {
     private String symbol;
     private BigDecimal price;
     private Integer quantity;
+    private Integer filledQuantity;
     private OrderSide side;
     private OrderStatus status;
 

@@ -14,6 +14,7 @@ public interface OrderMapper {
                 .symbol(order.getSymbol())
                 .price(order.getPrice())
                 .quantity(order.getQuantity())
+                .filledQuantity(order.getFilledQuantity())
                 .side(order.getSide())
                 .status(order.getStatus())
                 .createdTime(order.getCreatedTime())

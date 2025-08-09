@@ -1,34 +1,36 @@
 package com.equix.ordersimulator.domain.model;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Data
 public class PriceLevel implements Comparable<PriceLevel> {
+    @Getter
     private final BigDecimal price;
-    private final LinkedHashMap<Long, Order> orders = new LinkedHashMap<>();
+    private final Queue<Order> orders = new LinkedList<>();
 
-    public PriceLevel(BigDecimal price) {
-        this.price = price;
+    public void add(Order order) {
+        orders.add(order);
     }
 
-    public void add(Order o) {
-        orders.put(o.getId(), o);
+    public Order peek() {
+        return orders.peek();
     }
 
-    public void remove(Order o) {
-        orders.remove(o.getId());
+    public Order poll() {
+        return orders.poll();
     }
 
     public boolean isEmpty() {
         return orders.isEmpty();
     }
 
-    public Collection<Order> getOrders() {
-        return orders.values();
+    public void remove(Order order) {
+        orders.remove(order);
     }
 
     @Override

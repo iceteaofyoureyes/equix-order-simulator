@@ -45,6 +45,7 @@ public class OrderService {
         LocalDateTime currentTime = LocalDateTime.now();
 
         Order order = orderMapper.toOrder(request);
+        order.setFilledQuantity(0);
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedTime(currentTime);
         order.setUpdatedTime(currentTime);

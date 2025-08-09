@@ -1,4 +1,4 @@
-package com.equix.ordersimulator.interfaces.config;
+package com.equix.ordersimulator.infras.config;
 
 import lombok.Getter;
 import lombok.Setter;
