@@ -1,4 +1,4 @@
-package com.equix.ordersimulator.application.config;
+package com.equix.ordersimulator.domain.config;
 
 import com.equix.ordersimulator.domain.model.Order;
 import org.springframework.context.annotation.Bean;

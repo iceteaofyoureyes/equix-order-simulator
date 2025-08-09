@@ -1,7 +1,7 @@
-package com.equix.ordersimulator.interfaces.scheduler;
+package com.equix.ordersimulator.domain.scheduler;
 
-import com.equix.ordersimulator.application.service.OrderMatchingEngine;
 import com.equix.ordersimulator.domain.model.Order;
+import com.equix.ordersimulator.domain.service.OrderMatchingEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

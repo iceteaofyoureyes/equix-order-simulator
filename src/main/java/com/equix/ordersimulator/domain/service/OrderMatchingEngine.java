@@ -1,4 +1,4 @@
-package com.equix.ordersimulator.application.service;
+package com.equix.ordersimulator.domain.service;
 
 import com.equix.ordersimulator.domain.model.Order;
 import com.equix.ordersimulator.domain.model.PriceLevel;
